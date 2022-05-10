@@ -30,6 +30,8 @@ DIST_DEPS = {
             "additional_distfiles",
             "test_WORKSPACE_files",
         ],
+        "patch_args": ["-p1"],
+        "patches": ["//patches:platforms-haiku.patch"],
     },
     "bazelci_rules": {
         "archive": "bazelci_rules-1.0.0.tar.gz",
@@ -131,6 +133,8 @@ DIST_DEPS = {
         "patches": [
             "//third_party/grpc:grpc_1.41.0.patch",
             "//third_party/grpc:grpc_1.41.0.win_arm64.patch",
+            "//third_party/grpc:grpc_haiku.patch",
+            "//third_party/grpc:grpc_haiku_bazel.patch",
         ],
         "used_in": [
             "additional_distfiles",
@@ -143,6 +147,10 @@ DIST_DEPS = {
         "urls": [
             "https://mirror.bazel.build/github.com/c-ares/c-ares/archive/e982924acee7f7313b4baa4ee5ec000c5e373c30.tar.gz",
             "https://github.com/c-ares/c-ares/archive/e982924acee7f7313b4baa4ee5ec000c5e373c30.tar.gz",
+        ],
+        "patch_args": ["-p1"],
+        "patches": [
+            "//third_party/c-ares:cares_haiku.patch",
         ],
         "used_in": [
             "additional_distfiles",
@@ -163,6 +171,10 @@ DIST_DEPS = {
     },
     "com_google_absl": {
         "archive": "20211102.0.tar.gz",
+        "patch_args": ["-p1"],
+        "patches": [
+            "//third_party:com_google_absl/absl_haiku.patch",
+        ],
         "sha256": "dcf71b9cba8dc0ca9940c4b316a0c796be8fab42b070bb6b7cab62b48f0e66c4",
         "urls": [
             "https://mirror.bazel.build/github.com/abseil/abseil-cpp/archive/refs/tags/20211102.0.tar.gz",
@@ -293,6 +305,8 @@ DIST_DEPS = {
             "additional_distfiles",
             "test_WORKSPACE_files",
         ],
+        "patch_args": ["-p1"],
+        "patches": ["//patches:java_tools.patch"],
     },
     "remote_java_tools_linux": {
         "aliases": [

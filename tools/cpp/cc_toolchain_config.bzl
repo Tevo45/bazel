@@ -100,6 +100,8 @@ def _impl(ctx):
         toolchain_identifier = "local_freebsd"
     elif (ctx.attr.cpu == "openbsd"):
         toolchain_identifier = "local_openbsd"
+    elif (ctx.attr.cpu == "haiku"):
+        toolchain_identifier = "local_haiku"
     elif (ctx.attr.cpu == "local"):
         toolchain_identifier = "local_linux"
     elif (ctx.attr.cpu == "x64_windows" and ctx.attr.compiler == "windows_clang"):
@@ -122,6 +124,7 @@ def _impl(ctx):
     elif (ctx.attr.cpu == "darwin" or
           ctx.attr.cpu == "freebsd" or
           ctx.attr.cpu == "openbsd" or
+          ctx.attr.cpu == "haiku" or
           ctx.attr.cpu == "local" or
           ctx.attr.cpu == "x64_windows" or
           ctx.attr.cpu == "x64_windows_msvc"):
@@ -134,6 +137,7 @@ def _impl(ctx):
     elif (ctx.attr.cpu == "darwin" or
           ctx.attr.cpu == "freebsd" or
           ctx.attr.cpu == "openbsd" or
+          ctx.attr.cpu == "haiku" or
           ctx.attr.cpu == "local" or
           ctx.attr.cpu == "x64_windows" or
           ctx.attr.cpu == "x64_windows_msvc"):
@@ -149,6 +153,8 @@ def _impl(ctx):
         target_cpu = "freebsd"
     elif (ctx.attr.cpu == "openbsd"):
         target_cpu = "openbsd"
+    elif (ctx.attr.cpu == "haiku"):
+        target_cpu = "haiku"
     elif (ctx.attr.cpu == "local"):
         target_cpu = "local"
     elif (ctx.attr.cpu == "x64_windows"):
@@ -162,6 +168,7 @@ def _impl(ctx):
         target_libc = "armeabi-v7a"
     elif (ctx.attr.cpu == "freebsd" or
           ctx.attr.cpu == "openbsd" or
+          ctx.attr.cpu == "haiku" or
           ctx.attr.cpu == "local" or
           ctx.attr.cpu == "x64_windows"):
         target_libc = "local"
@@ -178,6 +185,7 @@ def _impl(ctx):
           ctx.attr.cpu == "darwin" or
           ctx.attr.cpu == "freebsd" or
           ctx.attr.cpu == "openbsd" or
+          ctx.attr.cpu == "haiku" or
           ctx.attr.cpu == "local"):
         compiler = "compiler"
     elif (ctx.attr.cpu == "x64_windows" and ctx.attr.compiler == "windows_clang"):
@@ -196,6 +204,7 @@ def _impl(ctx):
     elif (ctx.attr.cpu == "darwin" or
           ctx.attr.cpu == "freebsd" or
           ctx.attr.cpu == "openbsd" or
+          ctx.attr.cpu == "haiku" or
           ctx.attr.cpu == "local" or
           ctx.attr.cpu == "x64_windows" or
           ctx.attr.cpu == "x64_windows_msvc"):
@@ -208,6 +217,7 @@ def _impl(ctx):
     elif (ctx.attr.cpu == "darwin" or
           ctx.attr.cpu == "freebsd" or
           ctx.attr.cpu == "openbsd" or
+          ctx.attr.cpu == "haiku" or
           ctx.attr.cpu == "local" or
           ctx.attr.cpu == "x64_windows" or
           ctx.attr.cpu == "x64_windows_msvc"):
@@ -227,6 +237,12 @@ def _impl(ctx):
             action_name = "objcopy_embed_data",
             enabled = True,
             tools = [tool(path = "/usr/bin/objcopy")],
+        )
+    elif (ctx.attr.cpu == "haiku"):
+        objcopy_embed_data_action = action_config(
+            action_name = "objcopy_embed_data",
+            enabled = True,
+            tools = [tool(path = "/bin/objcopy")],
         )
     elif (ctx.attr.cpu == "x64_windows" and ctx.attr.compiler == "windows_clang"):
         objcopy_embed_data_action = action_config(
@@ -957,6 +973,7 @@ def _impl(ctx):
     if (ctx.attr.cpu == "darwin" or
         ctx.attr.cpu == "freebsd" or
         ctx.attr.cpu == "openbsd" or
+        ctx.attr.cpu == "haiku" or
         ctx.attr.cpu == "local"):
         user_compile_flags_feature = feature(
             name = "user_compile_flags",
@@ -1013,6 +1030,7 @@ def _impl(ctx):
     if (ctx.attr.cpu == "darwin" or
         ctx.attr.cpu == "freebsd" or
         ctx.attr.cpu == "openbsd" or
+        ctx.attr.cpu == "haiku" or
         ctx.attr.cpu == "local"):
         sysroot_feature = feature(
             name = "sysroot",
@@ -1169,6 +1187,7 @@ def _impl(ctx):
         ]
     elif (ctx.attr.cpu == "freebsd" or
           ctx.attr.cpu == "openbsd" or
+          ctx.attr.cpu == "haiku" or
           ctx.attr.cpu == "local"):
         features = [
             default_compile_flags_feature,
@@ -1216,6 +1235,39 @@ def _impl(ctx):
     elif (ctx.attr.cpu == "freebsd" or
           ctx.attr.cpu == "openbsd"):
         cxx_builtin_include_directories = ["/usr/lib/clang", "/usr/local/include", "/usr/include"]
+    elif (ctx.attr.cpu == "haiku"):
+        cxx_builtin_include_directories = [
+            "/boot/system/develop/headers/os",
+            "/boot/system/develop/headers/os/app",
+            "/boot/system/develop/headers/os/device",
+            "/boot/system/develop/headers/os/drivers",
+            "/boot/system/develop/headers/os/game",
+            "/boot/system/develop/headers/os/interface",
+            "/boot/system/develop/headers/os/kernel",
+            "/boot/system/develop/headers/os/locale",
+            "/boot/system/develop/headers/os/mail",
+            "/boot/system/develop/headers/os/media",
+            "/boot/system/develop/headers/os/midi",
+            "/boot/system/develop/headers/os/midi2",
+            "/boot/system/develop/headers/os/net",
+            "/boot/system/develop/headers/os/opengl",
+            "/boot/system/develop/headers/os/storage",
+            "/boot/system/develop/headers/os/support",
+            "/boot/system/develop/headers/os/translation",
+            "/boot/system/develop/headers/os/add-ons/graphics",
+            "/boot/system/develop/headers/os/add-ons/input_server",
+            "/boot/system/develop/headers/os/add-ons/mail_daemon",
+            "/boot/system/develop/headers/os/add-ons/registrar",
+            "/boot/system/develop/headers/os/add-ons/screen_saver",
+            "/boot/system/develop/headers/os/add-ons/tracker",
+            "/boot/system/develop/headers/os/be_apps/NetPositive",
+            "/boot/system/develop/headers/os/be_apps/Tracker",
+            "/boot/system/develop/headers/bsd",
+            "/boot/system/develop/headers/glibc",
+            "/boot/system/develop/headers/gnu",
+            "/boot/system/develop/headers/posix",
+            "/boot/system/develop/headers",
+        ]
     elif (ctx.attr.cpu == "local" or
           ctx.attr.cpu == "x64_windows" and ctx.attr.compiler == "windows_clang"):
         cxx_builtin_include_directories = ["/usr/lib/gcc/", "/usr/local/include", "/usr/include"]
@@ -1328,6 +1380,19 @@ def _impl(ctx):
             tool_path(name = "objcopy", path = "/usr/bin/objcopy"),
             tool_path(name = "objdump", path = "/usr/bin/objdump"),
             tool_path(name = "strip", path = "/usr/bin/strip"),
+        ]
+    elif (ctx.attr.cpu == "haiku"):
+        tool_paths = [
+            tool_path(name = "ar", path = "/bin/ar"),
+            tool_path(name = "cpp", path = "/bin/cpp"),
+            tool_path(name = "dwp", path = "/bin/false"),
+            tool_path(name = "gcc", path = "/bin/gcc"),
+            tool_path(name = "gcov", path = "/bin/gcov"),
+            tool_path(name = "ld", path = "/bin/ld"),
+            tool_path(name = "nm", path = "/bin/nm"),
+            tool_path(name = "objcopy", path = "/bin/objcopy"),
+            tool_path(name = "objdump", path = "/bin/objdump"),
+            tool_path(name = "strip", path = "/bin/strip"),
         ]
     elif (ctx.attr.cpu == "local"):
         tool_paths = [

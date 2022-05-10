@@ -23,7 +23,9 @@
 #include <string.h>
 #include <sys/resource.h>
 #include <sys/stat.h>
+#if !defined(__HAIKU__)
 #include <sys/syscall.h>
+#endif
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -679,6 +681,8 @@ static jobject NewDirents(JNIEnv *env,
 static char GetDirentType(struct dirent *entry,
                           int dirfd,
                           bool follow_symlinks) {
+  // FIXME this is just so we can compile
+#ifndef __HAIKU__
   switch (entry->d_type) {
     case DT_REG:
       return 'f';
@@ -700,6 +704,14 @@ static char GetDirentType(struct dirent *entry,
     default:
       return '?';
   }
+#else
+  portable_stat_struct statbuf;
+  if (portable_fstatat(dirfd, entry->d_name, &statbuf, 0) == 0) {
+    if (S_ISREG(statbuf.st_mode)) return 'f';
+    if (S_ISDIR(statbuf.st_mode)) return 'd';
+  }
+  return '?';
+#endif
 }
 }  // namespace
 
@@ -984,6 +996,8 @@ static int ForceDelete(JNIEnv* env, const std::vector<std::string>& dir_path,
 // posts an exception.
 static int IsSubdir(JNIEnv* env, const std::vector<std::string>& dir_path,
                     const int dir_fd, const struct dirent* de, bool* is_dir) {
+  // FIXME this is just so we can compile
+#ifndef __HAIKU__
   switch (de->d_type) {
     case DT_DIR:
       *is_dir = true;
@@ -1004,6 +1018,16 @@ static int IsSubdir(JNIEnv* env, const std::vector<std::string>& dir_path,
       *is_dir = false;
       return 0;
   }
+#else
+  struct stat st;
+  if (fstatat(dir_fd, de->d_name, &st, AT_SYMLINK_NOFOLLOW) == -1) {
+    PostDeleteTreesBelowException(env, errno, "fstatat", dir_path,
+                                  de->d_name);
+    return -1;
+  }
+  *is_dir = st.st_mode & S_IFDIR;
+  return 0;
+#endif
 }
 
 // Recursively deletes all trees under the given path.
