@@ -1,0 +1,28 @@
+From c2ba6e755068902fefe443ef2909103f8945d388 Mon Sep 17 00:00:00 2001
+From: "Estevan Castilho (Tevo)" <estevan.cps@gmail.com>
+Date: Mon, 9 May 2022 16:07:44 +0000
+Subject: [PATCH] os: add haiku constraint value
+
+---
+ os/BUILD | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/os/BUILD b/os/BUILD
+index 2c2d281..96df162 100644
+--- a/os/BUILD
++++ b/os/BUILD
+@@ -28,6 +28,11 @@ constraint_value(
+     constraint_setting = ":os",
+ )
+ 
++constraint_value(
++    name = "haiku",
++    constraint_setting = ":os",
++)
++
+ constraint_value(
+     name = "android",
+     constraint_setting = ":os",
+-- 
+2.30.2
+

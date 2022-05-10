@@ -568,6 +568,7 @@ UNNECESSARY_DYNAMIC_LIBRARIES = select({
     "//src/conditions:linux_s390x": "*.so *.jnilib *.dll",
     "//src/conditions:freebsd": "*.so *.jnilib *.dll",
     "//src/conditions:openbsd": "*.so *.jnilib *.dll",
+    "//src/conditions:haiku": "*.so *.jnilib *.dll",
     # Default is to play it safe -- better have a big binary than a slow binary
     #   The empty string means nothing is to be removed from the library;
     #   the rule command tests for the empty string explictly to avoid
@@ -585,13 +586,17 @@ genrule(
         "//src/conditions:linux_aarch64": ["netty_tcnative/netty-tcnative-boringssl-static-2.0.51.Final-linux-aarch_64.jar"],
         "//src/conditions:linux_x86_64": ["netty_tcnative/netty-tcnative-boringssl-static-2.0.51.Final-linux-x86_64.jar"],
         "//src/conditions:windows": ["netty_tcnative/netty-tcnative-boringssl-static-2.0.51.Final-windows-x86_64.jar"],
-        "//conditions:default": [],
+        # This is wrong, but having nothing errors out
+        # FIXME what the fuck am I supposed to do here?
+        "//conditions:default": ["netty_tcnative/netty-tcnative-2.0.51.Final.jar"],
     }),
     outs = ["netty_tcnative/netty-tcnative-filtered.jar"],
     cmd = "cp $< $@ && " +
           # Make sure we can write the output file, even if the input isn't writable.
-          "chmod +w $@ && " +
-          "zip -qd $@ */license/* " + UNNECESSARY_DYNAMIC_LIBRARIES,
+          "chmod +w $@ " + # "&& " +
+          # FIXME the explicit test was a lie, it fails here
+          "",
+#          "zip -qd $@ */license/* " + UNNECESSARY_DYNAMIC_LIBRARIES,
 )
 
 distrib_java_import(
@@ -797,6 +802,11 @@ config_setting(
 config_setting(
     name = "openbsd",
     values = {"host_cpu": "openbsd"},
+)
+
+config_setting(
+    name = "haiku",
+    values = {"host_cpu": "haiku"},
 )
 
 config_setting(
